@@ -1,7 +1,7 @@
 # QuoteAPI Shell — Terminal Quote Fetcher
 
 > A command line quote fetcher with random, daily, and keyword search modes.
-> Ask for a quote, filter by keyword, and get an answer printed straight to your terminal — all powered by the ZenQuotes API.
+> Ask for a quote, filter by keyword, and get an answer printed straight to your terminal. All powered by the ZenQuotes API.
 
 **Simple. Resilient. Terminal-first.**
 
@@ -44,7 +44,7 @@ Selecting option 1 fetches a completely random quote from the ZenQuotes API and 
 
 ![Quote of the Day output](Screenshots/img2.png)
 
-Selecting option 2 retrieves the ZenQuotes "quote of the day" — a single featured quote that stays the same for all users until it refreshes the next day.
+Selecting option 2 retrieves the ZenQuotes "quote of the day". A single featured quote that stays the same for all users until it refreshes the next day.
 
 ---
 
@@ -88,43 +88,43 @@ Selecting option 3 prompts the user to enter up to 10 comma-separated keywords. 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────┐
-│              Terminal Menu (main)                 │
-│                                                    │
-│      [1] Random    [2] Daily    [3] Keyword       │
-└─────────────────────────┬─────────────────────────┘
-                           │
-              ┌────────────▼─────────────┐
-              │     get_user_choice()     │
-              │  validates input, returns  │
-              │   mode + optional keywords │
-              └────────────┬─────────────┘
-                           │
-              ┌────────────▼─────────────┐
-              │       fetch_quote()       │
-              │  routes to the correct     │
-              │   ZenQuotes endpoint       │
-              └────────────┬─────────────┘
-                           │
-          ┌────────────────┴────────────────┐
-          │                                 │
-┌─────────▼─────────┐            ┌──────────▼──────────┐
-│  random / today     │            │    keyword mode      │
-│  single GET request  │            │  GET full quote list  │
-│                       │            │  + local filtering    │
-└─────────┬─────────┘            └──────────┬──────────┘
-          │                                 │
-          └────────────────┬────────────────┘
-                           │
-              ┌────────────▼─────────────┐
-              │   Retry + Exponential     │
-              │   Backoff (on failure)     │
-              └────────────┬─────────────┘
-                           │
-              ┌────────────▼─────────────┐
-              │      Terminal Output       │
-              │   colored quote + author   │
-              └───────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                    Terminal Menu (main)                    │
+│                                                            │
+│          [1] Random   [2] Daily   [3] Keyword              │
+└─────────────────────────────┬──────────────────────────────┘
+                              │
+                 ┌────────────▼────────────┐
+                 │    get_user_choice()    │
+                 │  Validates user input   │
+                 │ Returns mode + keywords │
+                 └────────────┬────────────┘
+                              │
+                 ┌────────────▼────────────┐
+                 │      fetch_quote()      │
+                 │ Routes to correct API   │
+                 │     endpoint/mode       │
+                 └────────────┬────────────┘
+                              │
+          ┌───────────────────┴───────────────────┐
+          │                                       │
+┌─────────▼──────────┐                 ┌──────────▼──────────┐
+│   Random / Daily   │                 │    Keyword Mode     │
+│ Single GET request │                 │ GET complete list   │
+│                    │                 │ + local filtering   │
+└─────────┬──────────┘                 └──────────┬──────────┘
+          │                                       │
+          └───────────────────┬───────────────────┘
+                              │
+                 ┌────────────▼────────────┐
+                 │ Retry + Exponential     │
+                 │ Backoff on failures     │
+                 └────────────┬────────────┘
+                              │
+                 ┌────────────▼────────────┐
+                 │    Terminal Output      │
+                 │ Colored quote + author  │
+                 └─────────────────────────┘
 ```
 
 ---
