@@ -1,6 +1,6 @@
 # QuoteAPI Shell — Terminal Quote Fetcher
 
-> A command-line quote fetcher with random, daily, and keyword search modes.
+> A command line quote fetcher with random, daily, and keyword search modes.
 > Ask for a quote, filter by keyword, and get an answer printed straight to your terminal — all powered by the ZenQuotes API.
 
 **Simple. Resilient. Terminal-first.**
@@ -8,15 +8,15 @@
 No accounts. No configuration files. Just a menu and a quote.
 
 [![Python](https://img.shields.io/badge/Python-3.7+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Requests](https://img.shields.io/badge/Requests-HTTP%20Library-000000?logo=python&logoColor=white)](https://docs.python-requests.org/)
 [![API](https://img.shields.io/badge/API-ZenQuotes-a78bfa)](https://zenquotes.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Requests](https://img.shields.io/badge/Requests-HTTP%20Library-000000?logo=python&logoColor=white)](https://docs.python-requests.org/)
 
 ---
 
 ## What Is This?
 
-QuoteAPI Shell is a lightweight, interactive command-line application for exploring quotes without leaving the terminal. It was built to demonstrate practical handling of external API calls — including retries, backoff, and local text filtering — wrapped in a simple text-based menu.
+QuoteAPI Shell is a lightweight, interactive command-line application for exploring quotes without leaving the terminal. It was built to demonstrate practical handling of external API calls including retries, backoff, and local text filtering wrapped in a simple text-based menu.
 
 Rather than depending on a server-side search feature, keyword matching happens entirely on the client: the full quote list is pulled from the ZenQuotes API once, then filtered locally against whatever keywords the user provides. If a request fails, the app automatically retries with an increasing delay before giving up.
 
@@ -37,7 +37,7 @@ Rather than depending on a server-side search feature, keyword matching happens 
 
 ![Random Quote output](Screenshots/img1.png)
 
-Selecting option 1 fetches a completely random quote from the ZenQuotes API and prints it to the terminal along with its author. No additional input is required beyond the initial menu choice.
+Selecting option 1 fetches a completely random quote from the ZenQuotes API and prints it to the terminal along with its author. 
 
 ---
 
@@ -53,7 +53,7 @@ Selecting option 2 retrieves the ZenQuotes "quote of the day" — a single featu
 
 ![Keyword-based Quote output](Screenshots/img3.png)
 
-Selecting option 3 prompts the user to enter up to 10 comma-separated keywords. The app searches the full list of available quotes and returns one at random whose text contains at least one of the given keywords. If no single quote matches all the keywords together, it automatically falls back to searching keyword by keyword until a match is found.
+Selecting option 3 prompts the user to enter up to 10 comma-separated keywords. The app searches the full list of available quotes and returns one at random whose text contains at least one of the given keywords. 
 
 ---
 
@@ -205,15 +205,4 @@ Choice >
 
 ---
 
-## Future Improvements
-
-- **Unit Testing** — Add tests for keyword filtering and retry logic.
-- **Quote Caching** — Cache fetched quotes locally to reduce redundant API calls.
-- **CLI Arguments** — Support non-interactive usage via command-line flags.
-- **Export Support** — Allow exporting fetched quotes to a file (e.g., JSON or CSV).
-
----
-
-## License
-
-This project is available under the MIT License. See the LICENSE file for details.
+*"Few lines of Python. Endless words of wisdom."*
