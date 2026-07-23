@@ -66,12 +66,25 @@ Choice >
 - Enter `3` to search by keyword(s), then enter one or more comma-separated keywords when prompted.
 - Enter `0` at any time to exit the program.
 
-### Example Output
+## Outputs
 
-```
-"The best way to predict the future is to create it."
-        ~ Abraham Lincoln
-```
+**Option 1 — Random Quote**
+
+![Random Quote output](Screenshots/img1.png)
+
+Selecting option 1 fetches a completely random quote from the ZenQuotes API and prints it to the terminal along with its author. No additional input is required beyond the initial menu choice.
+
+**Option 2 — Quote of the Day**
+
+![Quote of the Day output](Screenshots/img2.png)
+
+Selecting option 2 retrieves the ZenQuotes "quote of the day" — a single featured quote that stays the same for all users until it refreshes the next day.
+
+**Option 3 — Keyword-based Quote**
+
+![Keyword-based Quote output](Screenshots/img3.png)
+
+Selecting option 3 prompts the user to enter up to 10 comma-separated keywords. The app then searches the full list of available quotes and returns one at random whose text contains at least one of the given keywords. If no single quote matches all the keywords together, the app automatically falls back to searching keyword by keyword until a match is found.
 
 ## Error Handling
 
@@ -86,7 +99,8 @@ The application is designed to fail gracefully:
 
 ```
 quoteapi-shell/
-├── quoteapi_shell.py   # Main application script
+├── Screenshots/         # Example screenshots of the application in use
+├── quoteapi_shell.py    # Main application script
 └── README.md
 ```
 
@@ -101,7 +115,4 @@ quoteapi-shell/
 
 This project is available under the MIT License. See the LICENSE file for details.
 
-## Suggested Repository Topics
-
-`python` `cli` `api` `zenquotes` `quotes` `command-line-tool` `requests` `error-handling` `retry-logic`
 
