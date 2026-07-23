@@ -31,9 +31,9 @@ Rather than depending on a server-side search feature, keyword matching happens 
 
 ---
 
-## Output
+## Screenshots
 
-### Option 1 — Random Quote
+### 1 — Random Quote
 
 ![Random Quote output](Screenshots/img1.png)
 
@@ -41,7 +41,7 @@ Selecting option 1 fetches a completely random quote from the ZenQuotes API and 
 
 ---
 
-### Option 2 — Quote of the Day
+### 2 — Quote of the Day
 
 ![Quote of the Day output](Screenshots/img2.png)
 
@@ -49,7 +49,7 @@ Selecting option 2 retrieves the ZenQuotes "quote of the day" — a single featu
 
 ---
 
-### Option 3 — Keyword-based Quote
+### 3 — Keyword-based Quote
 
 ![Keyword-based Quote output](Screenshots/img3.png)
 
@@ -217,4 +217,3 @@ Choice >
 ## License
 
 This project is available under the MIT License. See the LICENSE file for details.
-
