@@ -9,7 +9,6 @@ No accounts. No configuration files. Just a menu and a quote.
 
 [![Python](https://img.shields.io/badge/Python-3.7+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![API](https://img.shields.io/badge/API-ZenQuotes-a78bfa)](https://zenquotes.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Requests](https://img.shields.io/badge/Requests-HTTP%20Library-000000?logo=python&logoColor=white)](https://docs.python-requests.org/)
 
 ---
