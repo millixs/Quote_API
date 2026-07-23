@@ -1,47 +1,168 @@
-# QuoteAPI Shell
+# QuoteAPI Shell — Terminal Quote Fetcher
 
-A command-line quote fetcher built in Python that retrieves random quotes, the quote of the day, or quotes matching user-specified keywords, using the [ZenQuotes API](https://zenquotes.io/). The tool includes retry logic with exponential backoff to handle transient network or API failures gracefully.
+> A command-line quote fetcher with random, daily, and keyword search modes.
+> Ask for a quote, filter by keyword, and get an answer printed straight to your terminal — all powered by the ZenQuotes API.
 
-## Overview
+**Simple. Resilient. Terminal-first.**
 
-QuoteAPI Shell is a lightweight, interactive command-line application for exploring quotes without leaving the terminal. It was built to demonstrate practical handling of external API calls, including error handling, retries, and basic text filtering, wrapped in a simple text-based menu interface.
+No accounts. No configuration files. Just a menu and a quote.
 
-## Features
+[![Python](https://img.shields.io/badge/Python-3.7+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Requests](https://img.shields.io/badge/Requests-HTTP%20Library-000000?logo=python&logoColor=white)](https://docs.python-requests.org/)
+[![API](https://img.shields.io/badge/API-ZenQuotes-a78bfa)](https://zenquotes.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+---
+
+## What Is This?
+
+QuoteAPI Shell is a lightweight, interactive command-line application for exploring quotes without leaving the terminal. It was built to demonstrate practical handling of external API calls — including retries, backoff, and local text filtering — wrapped in a simple text-based menu.
+
+Rather than depending on a server-side search feature, keyword matching happens entirely on the client: the full quote list is pulled from the ZenQuotes API once, then filtered locally against whatever keywords the user provides. If a request fails, the app automatically retries with an increasing delay before giving up.
+
+| Function | Responsibility |
+|---|---|
+| `get_user_choice()` | Displays the menu, validates input, and collects keywords when needed |
+| `fetch_quote()` | Routes the request to the correct ZenQuotes endpoint and manages retries |
+| `filter_quotes_by_keywords()` | Filters the full quote list against one or more keywords |
+| `contains_keyword()` | Checks whether a keyword appears as a whole word in a given text |
+| `exponential_backoff_delay()` | Computes the wait time before each retry attempt |
+| `main()` | Entry point — ties the menu, fetch, and output together |
+
+---
+
+## Output
+
+### Option 1 — Random Quote
+
+![Random Quote output](Screenshots/img1.png)
+
+Selecting option 1 fetches a completely random quote from the ZenQuotes API and prints it to the terminal along with its author. No additional input is required beyond the initial menu choice.
+
+---
+
+### Option 2 — Quote of the Day
+
+![Quote of the Day output](Screenshots/img2.png)
+
+Selecting option 2 retrieves the ZenQuotes "quote of the day" — a single featured quote that stays the same for all users until it refreshes the next day.
+
+---
+
+### Option 3 — Keyword-based Quote
+
+![Keyword-based Quote output](Screenshots/img3.png)
+
+Selecting option 3 prompts the user to enter up to 10 comma-separated keywords. The app searches the full list of available quotes and returns one at random whose text contains at least one of the given keywords. If no single quote matches all the keywords together, it automatically falls back to searching keyword by keyword until a match is found.
+
+---
+
+## Feature List
+
+### Quote Retrieval
 - **Random Quote** — Fetches a random quote from the ZenQuotes API.
 - **Quote of the Day** — Retrieves the daily featured quote.
-- **Keyword-Based Search** — Searches quote text and author names for one or more comma-separated keywords (up to 10) and returns a matching quote at random.
+- **Keyword-Based Search** — Searches quote text for one or more comma-separated keywords (up to 10) and returns a matching quote at random.
 - **Fallback Matching** — If no quote matches all provided keywords, the tool automatically retries with each keyword individually before giving up.
+
+### Reliability
 - **Retry with Exponential Backoff** — Automatically retries failed API requests up to 3 times, with increasing delay (2s, 4s, 8s) between attempts.
 - **Structured Logging** — Uses Python's `logging` module to report warnings and errors during API calls.
-- **Colored Terminal Output** — Displays the returned quote and author using ANSI color codes for readability.
+
+### Terminal Experience
+- **Menu-driven Interface** — A simple numbered menu handles input validation and re-prompts on invalid entries.
+- **Colored Output** — Displays the returned quote and author using ANSI color codes for readability.
+
+---
 
 ## How It Works
 
-1. The user is presented with a menu and selects one of three modes: random quote, quote of the day, or keyword search.
-2. For random and daily quotes, the app sends a single request to the corresponding ZenQuotes endpoint.
-3. For keyword search, the app retrieves the full list of available quotes, then filters them locally by checking whether any of the supplied keywords appear as whole words in the quote text.
-4. If a request fails due to a network error or a non-200 response, the app waits using an exponential backoff delay and retries, up to a maximum of 3 attempts.
-5. If no exact keyword match is found across all keywords combined, the app falls back to searching for each keyword individually before returning no result.
-6. The final quote and author are printed to the terminal in color.
+1. **Menu → Mode Selection** — `get_user_choice()` displays the menu and returns one of three modes: random, daily, or keyword search.
+2. **Mode → API Request** — For random and daily quotes, `fetch_quote()` sends a single request to the corresponding ZenQuotes endpoint.
+3. **Keyword Mode → Local Filtering** — For keyword search, the full quote list is retrieved once, then filtered locally by checking whether any supplied keyword appears as a whole word in the quote text.
+4. **Failure → Retry** — If a request fails due to a network error or a non-200 response, the app waits using an exponential backoff delay and retries, up to a maximum of 3 attempts.
+5. **No Match → Fallback** — If no quote matches all keywords combined, the app falls back to searching for each keyword individually before returning no result.
+6. **Result → Terminal Output** — The final quote and author are printed to the terminal in color.
 
-## Requirements
+---
 
-- Python 3.7 or higher
-- [requests](https://pypi.org/project/requests/) library
+## Architecture
+
+```
+┌──────────────────────────────────────────────────┐
+│              Terminal Menu (main)                 │
+│                                                    │
+│      [1] Random    [2] Daily    [3] Keyword       │
+└─────────────────────────┬─────────────────────────┘
+                           │
+              ┌────────────▼─────────────┐
+              │     get_user_choice()     │
+              │  validates input, returns  │
+              │   mode + optional keywords │
+              └────────────┬─────────────┘
+                           │
+              ┌────────────▼─────────────┐
+              │       fetch_quote()       │
+              │  routes to the correct     │
+              │   ZenQuotes endpoint       │
+              └────────────┬─────────────┘
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+┌─────────▼─────────┐            ┌──────────▼──────────┐
+│  random / today     │            │    keyword mode      │
+│  single GET request  │            │  GET full quote list  │
+│                       │            │  + local filtering    │
+└─────────┬─────────┘            └──────────┬──────────┘
+          │                                 │
+          └────────────────┬────────────────┘
+                           │
+              ┌────────────▼─────────────┐
+              │   Retry + Exponential     │
+              │   Backoff (on failure)     │
+              └────────────┬─────────────┘
+                           │
+              ┌────────────▼─────────────┐
+              │      Terminal Output       │
+              │   colored quote + author   │
+              └───────────────────────────┘
+```
+
+---
+
+## Project Structure
+
+```
+quoteapi-shell/
+├── Screenshots/         # Example screenshots of the application in use
+├── quoteapi_shell.py    # Main application script
+└── README.md
+```
+
+---
 
 ## Installation
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/millixs/Quote_API.git
-   cd Quote_API
-   ```
+### Prerequisites
 
-2. Install the required dependency:
-   ```bash
-   pip install requests
-   ```
+| Requirement | Notes |
+|---|---|
+| Python 3.7+ | Uses f-strings; no external framework needed |
+| Internet connection | Required to reach the ZenQuotes API |
+| `requests` library | Installed via pip — see setup below |
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/millixs/Quote_API.git
+cd Quote_API
+
+# Install the required dependency
+pip install requests
+```
+
+---
 
 ## Usage
 
@@ -61,58 +182,39 @@ You will be presented with a menu:
 Choice >
 ```
 
-- Enter `1` for a random quote.
-- Enter `2` for the quote of the day.
-- Enter `3` to search by keyword(s), then enter one or more comma-separated keywords when prompted.
-- Enter `0` at any time to exit the program.
+### Basic workflow
 
-## Outputs
+1. Choose `1`, `2`, or `3` from the menu.
+2. If you chose `3`, enter one or more comma-separated keywords when prompted.
+3. The app fetches and, if needed, filters the quote list — retrying automatically on failure.
+4. The matching quote and author are printed to the terminal in color.
+5. Enter `0` at any time to exit the program.
 
-**Option 1 — Random Quote**
+---
 
-![Random Quote output](Screenshots/img1.png)
+## Tech Stack
 
-Selecting option 1 fetches a completely random quote from the ZenQuotes API and prints it to the terminal along with its author. No additional input is required beyond the initial menu choice.
+| Layer | Technology | Role |
+|---|---|---|
+| **Language** | Python 3.7+ | Core application logic |
+| **HTTP Client** | `requests` | Sends GET requests to the ZenQuotes API |
+| **API** | ZenQuotes API | Source of quote data (random, daily, full list) |
+| **Logging** | `logging` (stdlib) | Reports warnings and errors during API calls |
+| **Retry Strategy** | Custom exponential backoff | Handles transient network and API failures |
+| **Output Formatting** | ANSI escape codes | Colored terminal output |
 
-**Option 2 — Quote of the Day**
+---
 
-![Quote of the Day output](Screenshots/img2.png)
+## Future Improvements
 
-Selecting option 2 retrieves the ZenQuotes "quote of the day" — a single featured quote that stays the same for all users until it refreshes the next day.
+- **Unit Testing** — Add tests for keyword filtering and retry logic.
+- **Quote Caching** — Cache fetched quotes locally to reduce redundant API calls.
+- **CLI Arguments** — Support non-interactive usage via command-line flags.
+- **Export Support** — Allow exporting fetched quotes to a file (e.g., JSON or CSV).
 
-**Option 3 — Keyword-based Quote**
-
-![Keyword-based Quote output](Screenshots/img3.png)
-
-Selecting option 3 prompts the user to enter up to 10 comma-separated keywords. The app then searches the full list of available quotes and returns one at random whose text contains at least one of the given keywords. If no single quote matches all the keywords together, the app automatically falls back to searching keyword by keyword until a match is found.
-
-## Error Handling
-
-The application is designed to fail gracefully:
-
-- Invalid menu input is caught and re-prompted without crashing the program.
-- Network errors (timeouts, connection issues) are logged and trigger an automatic retry.
-- Non-200 API responses are logged as warnings and also trigger a retry.
-- After all retry attempts are exhausted, the program informs the user and exits the current operation cleanly rather than throwing an unhandled exception.
-
-## Project Structure
-
-```
-quoteapi-shell/
-├── Screenshots/         # Example screenshots of the application in use
-├── quoteapi_shell.py    # Main application script
-└── README.md
-```
-
-## Potential Improvements
-
-- Add unit tests for keyword filtering and retry logic.
-- Support caching of quotes to reduce redundant API calls.
-- Add command-line arguments for non-interactive usage.
-- Support exporting fetched quotes to a file (e.g., JSON or CSV).
+---
 
 ## License
 
 This project is available under the MIT License. See the LICENSE file for details.
-
 
